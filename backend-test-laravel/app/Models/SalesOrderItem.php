@@ -18,11 +18,13 @@ class SalesOrderItem extends Model
         'selling_price',
     ];
 
+    // Relasi kembali ke SalesOrder
     public function salesOrder(): BelongsTo
     {
         return $this->belongsTo(SalesOrder::class, 'order_id');
     }
 
+    // Relasi ke Product
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);

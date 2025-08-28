@@ -11,16 +11,25 @@ class SalesOrder extends Model
 {
     use HasFactory;
 
-    public function sales(): BelongsTo
+    protected $fillable = [
+        'reference_no',
+        'sales_id',
+        'customer_id'
+    ];
+
+    // Relasi ke Sales
+    public function sale(): BelongsTo
     {
         return $this->belongsTo(Sale::class, 'sales_id');
     }
 
+    // Relasi ke Customer
     public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class);
     }
 
+    // Relasi ke item-item dalam order
     public function items(): HasMany
     {
         return $this->hasMany(SalesOrderItem::class, 'order_id');
