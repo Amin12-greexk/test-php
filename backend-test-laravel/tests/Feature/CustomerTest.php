@@ -4,11 +4,11 @@ use App\Models\Customer;
 use function Pest\Laravel\postJson;
 use function Pest\Laravel\putJson;
 
-it('dapat membuat customer', function () {
+it('dapat membuat customer baru', function () {
     $customerData = [
         'name' => 'John Doe',
         'address' => '123 Main St',
-        'phone' => '+14155552671',
+        'phone' => '+14155552671', // Nomor valid untuk testing
     ];
 
     postJson('/api/customers', $customerData)
@@ -16,11 +16,11 @@ it('dapat membuat customer', function () {
         ->assertJsonFragment($customerData);
 });
 
-it('dapat update customer', function () {
+it('dapat mengupdate data customer', function () {
     $customer = Customer::factory()->create();
     $updateData = [
         'name' => 'Jane Doe',
-        'phone' => '+14155552672', // Valid US Number
+        'phone' => '+14155552672', // Nomor valid untuk testing
     ];
 
     putJson("/api/customers/{$customer->id}", $updateData)

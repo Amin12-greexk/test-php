@@ -4,6 +4,10 @@ use App\Models\Customer;
 use App\Models\Product;
 use App\Models\Sale;
 use function Pest\Laravel\postJson;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+
+// TAMBAHKAN BARIS INI
+uses(Tests\TestCase::class, RefreshDatabase::class);
 
 it('can create a sales order', function () {
     $sale = Sale::factory()->create();
