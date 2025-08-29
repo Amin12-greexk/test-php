@@ -1,32 +1,38 @@
 <?php
 
+namespace Tests\Feature;
+
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 use App\Models\Customer;
-// Kita tidak perlu lagi use function ... karena kita akan pakai $this
-// use function Pest\Laravel\postJson;
-// use function Pest\Laravel\putJson;
 
-it('dapat membuat customer baru', function () {
-    $customerData = [
-        'name' => 'John Doe',
-        'address' => '123 Main St',
-        'phone' => '+14155552671', // Nomor valid untuk testing
-    ];
+class CustomerTest extends TestCase
+{
+    use RefreshDatabase;
 
-    // Ganti postJson(...) menjadi $this->postJson(...)
-    $this->postJson('/api/customers', $customerData)
-        ->assertStatus(201)
-        ->assertJsonFragment($customerData);
-});
+    public function test_dapat_membuat_customer_baru(): void
+    {
+        $customerData = [
+            'nama' => 'John Doe',
+            'address' => '123 Main St',
+            'phone' => '+14155552671',
+        ];
 
-it('dapat mengupdate data customer', function () {
-    $customer = Customer::factory()->create();
-    $updateData = [
-        'name' => 'Jane Doe',
-        'phone' => '+14155552672', // Nomor valid untuk testing
-    ];
+        $this->postJson('/api/customers', $customerData)
+            ->assertStatus(201)
+            ->assertJsonFragment($customerData);
+    }
 
-    // Ganti putJson(...) menjadi $this->putJson(...)
-    $this->putJson("/api/customers/{$customer->id}", $updateData)
-        ->assertStatus(200)
-        ->assertJsonFragment($updateData);
-});
+    public function test_dapat_mengupdate_data_customer(): void
+    {
+        $customer = Customer::factory()->create();
+        $updateData = [
+            'nama' => 'Jane Doe',
+            'phone' => '+14155552672',
+        ];
+
+        $this->putJson("/api/customers/{$customer->id}", $updateData)
+            ->assertStatus(200)
+            ->assertJsonFragment($updateData);
+    }
+}
