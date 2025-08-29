@@ -4,10 +4,6 @@ use App\Models\Customer;
 use App\Models\Product;
 use App\Models\Sale;
 use function Pest\Laravel\postJson;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-
-// TAMBAHKAN BARIS INI
-uses(Tests\TestCase::class, RefreshDatabase::class);
 
 it('can create a sales order', function () {
     $sale = Sale::factory()->create();
@@ -23,6 +19,6 @@ it('can create a sales order', function () {
         ],
     ];
 
-    postJson('/api/sales-orders', $orderData)
+    postJson('/api/sales-orders', $orderData) // ✅ pakai helper Pest
         ->assertStatus(201);
 });

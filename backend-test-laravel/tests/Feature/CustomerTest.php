@@ -1,8 +1,9 @@
 <?php
 
 use App\Models\Customer;
-use function Pest\Laravel\postJson;
-use function Pest\Laravel\putJson;
+// Kita tidak perlu lagi use function ... karena kita akan pakai $this
+// use function Pest\Laravel\postJson;
+// use function Pest\Laravel\putJson;
 
 it('dapat membuat customer baru', function () {
     $customerData = [
@@ -11,7 +12,8 @@ it('dapat membuat customer baru', function () {
         'phone' => '+14155552671', // Nomor valid untuk testing
     ];
 
-    postJson('/api/customers', $customerData)
+    // Ganti postJson(...) menjadi $this->postJson(...)
+    $this->postJson('/api/customers', $customerData)
         ->assertStatus(201)
         ->assertJsonFragment($customerData);
 });
@@ -23,7 +25,8 @@ it('dapat mengupdate data customer', function () {
         'phone' => '+14155552672', // Nomor valid untuk testing
     ];
 
-    putJson("/api/customers/{$customer->id}", $updateData)
+    // Ganti putJson(...) menjadi $this->putJson(...)
+    $this->putJson("/api/customers/{$customer->id}", $updateData)
         ->assertStatus(200)
         ->assertJsonFragment($updateData);
 });
