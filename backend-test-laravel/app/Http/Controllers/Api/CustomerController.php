@@ -7,6 +7,7 @@ use App\Models\Customer;
 use App\Http\Requests\StoreCustomerRequest;
 use App\Http\Requests\UpdateCustomerRequest;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class CustomerController extends Controller
 {
@@ -14,11 +15,11 @@ class CustomerController extends Controller
     {
         $validated = $request->validated();
 
-        // Phone validation
         $response = Http::get('https://phonevalidation.abstractapi.com/v1/', [
             'api_key' => env('ABSTRACT_API_KEY'),
             'phone' => $validated['phone']
         ]);
+
 
         if ($response->failed() || !$response->json()['valid']) {
             return response()->json(['error' => 'Invalid phone number'], 422);
@@ -28,7 +29,6 @@ class CustomerController extends Controller
 
         return response()->json($customer, 201);
     }
-
     public function update(UpdateCustomerRequest $request, Customer $customer)
     {
         $validated = $request->validated();

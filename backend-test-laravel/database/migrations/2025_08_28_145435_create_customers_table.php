@@ -9,7 +9,7 @@ return new class extends Migration {
     {
         Schema::create('customers', function (Blueprint $table) {
             $table->id();
-            $table->string('nama', 100); // Ganti dari 'name' ke 'nama'
+            $table->string('name', 100);
             $table->string('address');
             $table->string('phone', 20);
             $table->timestamps();

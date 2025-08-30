@@ -13,7 +13,7 @@ class CustomerTest extends TestCase
     public function test_dapat_membuat_customer_baru(): void
     {
         $customerData = [
-            'nama' => 'John Doe',
+            'name' => 'John Doe',
             'address' => '123 Main St',
             'phone' => '+14155552671',
         ];
@@ -27,7 +27,7 @@ class CustomerTest extends TestCase
     {
         $customer = Customer::factory()->create();
         $updateData = [
-            'nama' => 'Jane Doe',
+            'name' => 'Jane Doe',
             'phone' => '+14155552672',
         ];
 
