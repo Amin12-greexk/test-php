@@ -17,12 +17,6 @@ class Sale extends Model
         return $this->belongsTo(User::class);
     }
 
-    // Relasi ke SalesArea (jika ada model SalesArea)
-    // public function area(): BelongsTo
-    // {
-    //     return $this->belongsTo(SalesArea::class, 'area_id');
-    // }
-
     // Relasi ke SalesOrder
     public function salesOrders(): HasMany
     {

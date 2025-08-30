@@ -15,8 +15,6 @@ class Customer extends Model
         'address',
         'phone',
     ];
-
-    // Customer bisa memiliki banyak SalesOrder
     public function salesOrders(): HasMany
     {
         return $this->hasMany(SalesOrder::class);

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use App\Models\Sale;
 use App\Helpers\NumberHelper;
 
 class SalesTargetController extends Controller
@@ -18,12 +19,12 @@ class SalesTargetController extends Controller
             $sales = Sale::with('user')->find($request->sales_id);
         }
 
-        // Query untuk mengambil semua data yang relevan
         $query = DB::table('sales')
             ->join('users', 'sales.user_id', '=', 'users.id')
             ->leftJoin('sales_targets', function ($join) use ($year) {
                 $join->on('sales.id', '=', 'sales_targets.sales_id')
-                    ->where(DB::raw('YEAR(sales_targets.month)'), '=', $year);
+                    // Menggunakan active_date
+                    ->where(DB::raw('YEAR(sales_targets.active_date)'), '=', $year);
             })
             ->leftJoin('sales_orders', function ($join) use ($year) {
                 $join->on('sales.id', '=', 'sales_orders.sales_id')
@@ -31,13 +32,15 @@ class SalesTargetController extends Controller
             })
             ->leftJoin('sales_order_items', 'sales_orders.id', '=', 'sales_order_items.order_id')
             ->select(
-                DB::raw('IFNULL(MONTH(sales_targets.month), MONTH(sales_orders.created_at)) as month_num'),
-                DB::raw('SUM(DISTINCT sales_targets.target) as total_target'),
+                DB::raw('IFNULL(MONTH(sales_targets.active_date), MONTH(sales_orders.created_at)) as month_num'),
+
+                DB::raw('SUM(DISTINCT sales_targets.amount) as total_target'),
                 DB::raw('SUM(sales_order_items.selling_price * sales_order_items.quantity) as total_revenue'),
                 DB::raw('SUM((sales_order_items.selling_price - sales_order_items.production_price) * sales_order_items.quantity) as total_income')
             )
             ->where(function ($q) use ($year) {
-                $q->where(DB::raw('YEAR(sales_targets.month)'), '=', $year)
+
+                $q->where(DB::raw('YEAR(sales_targets.active_date)'), '=', $year)
                     ->orWhere(DB::raw('YEAR(sales_orders.created_at)'), '=', $year);
             })
             ->groupBy('month_num');
@@ -48,7 +51,6 @@ class SalesTargetController extends Controller
 
         $results = $query->get()->keyBy('month_num');
 
-        // Formatting data
         $monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
         $series = [
             ['name' => 'Target', 'data' => []],
@@ -78,12 +80,14 @@ class SalesTargetController extends Controller
             ->join('users', 'sales.user_id', '=', 'users.id')
             ->leftJoin('sales_targets', function ($join) use ($month) {
                 $join->on('sales.id', '=', 'sales_targets.sales_id')
-                    ->whereYear('sales_targets.month', '=', $month->year)
-                    ->whereMonth('sales_targets.month', '=', $month->month);
+
+                    ->whereYear('sales_targets.active_date', '=', $month->year)
+                    ->whereMonth('sales_targets.active_date', '=', $month->month);
             })
             ->select(
                 'users.name as sales_name',
-                DB::raw('IFNULL(sales_targets.target, 0) as target'),
+
+                DB::raw('IFNULL(sales_targets.amount, 0) as target'),
                 DB::raw('(SELECT SUM(soi.selling_price * soi.quantity)
                           FROM sales_orders so
                           JOIN sales_order_items soi ON so.id = soi.order_id
@@ -101,7 +105,6 @@ class SalesTargetController extends Controller
 
         $performance = $query->get();
 
-        // Format data
         $formattedItems = $performance->map(function ($item) {
             $revenue = (float) $item->revenue;
             $target = (float) $item->target;

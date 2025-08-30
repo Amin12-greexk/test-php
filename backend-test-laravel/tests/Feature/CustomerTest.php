@@ -13,7 +13,7 @@ class CustomerTest extends TestCase
     public function test_dapat_membuat_customer_baru(): void
     {
         $customerData = [
-            'name' => 'John Doe',
+            'name' => 'John',
             'address' => '123 Main St',
             'phone' => '+14155552671',
         ];
